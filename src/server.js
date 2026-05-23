@@ -1,10 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const pino = require("pino-http")();
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import pinoHttp from 'pino-http';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
 
 const app = express();
-
+const pino = pinoHttp();
 const PORT = process.env.PORT || 3000;
 
 app.use(pino);
@@ -31,15 +34,16 @@ app.use((req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  if (req && req.log && typeof req.log.error === "function") req.log.error(err);
+  if (req && req.log && typeof req.log.error === 'function') req.log.error(err);
   res.status(500).json({ message: err.message });
 });
 
-if (require.main === module) {
+const __filename = fileURLToPath(import.meta.url);
+if (process.argv[1] === __filename) {
   app.listen(PORT, () => {
     // eslint-disable-next-line no-console
     console.log(`Server running on port ${PORT}`);
   });
 }
 
-module.exports = app;
+export default app;
