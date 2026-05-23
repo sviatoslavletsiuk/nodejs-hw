@@ -3,6 +3,7 @@
 Проєкт виконано для домашнього завдання — Express сервер для нотаток.
 
 ## Посилання (заповніть після пушу/деплою)
+
 - GitHub (гілка `01-express`): https://github.com/<your-username>/nodejs-hw/tree/01-express
 - Render: https://<your-service>.onrender.com
 
@@ -29,6 +30,7 @@ curl http://localhost:3000/test-error
 ```
 
 ## Примітки для деплою на Render
+
 - Підключіть репозиторій GitHub і виберіть гілку `01-express`.
 - Вкажіть команду запуску: `npm start` (Render визначить `start` зі `package.json`).
 - Додайте змінну середовища `PORT` (якщо потрібно) у налаштуваннях сервісу.
