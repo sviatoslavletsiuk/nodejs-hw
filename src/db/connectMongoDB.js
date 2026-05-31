@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
-const connectMongoDB = async (mongoUrl) => {
+export const connectMongoDB = async () => {
+  const mongoUrl = process.env.MONGO_URL;
+  if (!mongoUrl) {
+    throw new Error('MONGO_URL is not defined in environment variables');
+  }
+
   try {
     await mongoose.connect(mongoUrl, {
       useNewUrlParser: true,
@@ -12,5 +17,3 @@ const connectMongoDB = async (mongoUrl) => {
     throw error;
   }
 };
-
-export default connectMongoDB;

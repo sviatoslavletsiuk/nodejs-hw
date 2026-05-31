@@ -2,11 +2,11 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import connectMongoDB from './db/connectMongoDB.js';
-import notesRoutes from './routes/notesRoutes.js';
-import logger from './middleware/logger.js';
-import notFoundHandler from './middleware/notFoundHandler.js';
-import errorHandler from './middleware/errorHandler.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import { notesRoutes } from './routes/notesRoutes.js';
+import { logger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-app.use('/notes', notesRoutes);
+app.use(notesRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
@@ -32,7 +32,7 @@ if (process.argv[1] === __filename) {
 
   (async () => {
     try {
-      await connectMongoDB(MONGO_URL);
+      await connectMongoDB();
       app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
       });
