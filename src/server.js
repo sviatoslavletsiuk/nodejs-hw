@@ -1,49 +1,46 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import pinoHttp from 'pino-http';
 import { fileURLToPath } from 'url';
+import connectMongoDB from './db/connectMongoDB.js';
+import notesRoutes from './routes/notesRoutes.js';
+import logger from './middleware/logger.js';
+import notFoundHandler from './middleware/notFoundHandler.js';
+import errorHandler from './middleware/errorHandler.js';
 
 dotenv.config();
 
 const app = express();
-const pino = pinoHttp();
 const PORT = process.env.PORT || 3000;
 
-app.use(pino);
+app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-app.get("/notes", (req, res) => {
-  res.status(200).json({ message: "Retrieved all notes" });
-});
+app.use('/notes', notesRoutes);
 
-app.get("/notes/:noteId", (req, res) => {
-  const { noteId } = req.params;
-  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
-});
-
-app.get("/test-error", (req, res) => {
-  throw new Error("Simulated server error");
-});
-
-// 404 middleware
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  if (req && req.log && typeof req.log.error === 'function') req.log.error(err);
-  res.status(500).json({ message: err.message });
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 const __filename = fileURLToPath(import.meta.url);
 if (process.argv[1] === __filename) {
-  app.listen(PORT, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Server running on port ${PORT}`);
-  });
+  const MONGO_URL = process.env.MONGO_URL;
+  if (!MONGO_URL) {
+    console.error('MONGO_URL is not defined in environment variables');
+    process.exit(1);
+  }
+
+  (async () => {
+    try {
+      await connectMongoDB(MONGO_URL);
+      app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+      });
+    } catch {
+      console.error('Failed to start server due to DB connection error');
+      process.exit(1);
+    }
+  })();
 }
 
 export default app;
