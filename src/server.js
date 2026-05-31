@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import pinoHttp from 'pino-http';
 import { fileURLToPath } from 'url';
 import connectMongoDB from './db/connectMongoDB.js';
 import notesRoutes from './routes/notesRoutes.js';
@@ -27,7 +26,6 @@ const __filename = fileURLToPath(import.meta.url);
 if (process.argv[1] === __filename) {
   const MONGO_URL = process.env.MONGO_URL;
   if (!MONGO_URL) {
-    // eslint-disable-next-line no-console
     console.error('MONGO_URL is not defined in environment variables');
     process.exit(1);
   }
@@ -36,11 +34,9 @@ if (process.argv[1] === __filename) {
     try {
       await connectMongoDB(MONGO_URL);
       app.listen(PORT, () => {
-        // eslint-disable-next-line no-console
         console.log(`Server running on port ${PORT}`);
       });
-    } catch (err) {
-      // eslint-disable-next-line no-console
+    } catch {
       console.error('Failed to start server due to DB connection error');
       process.exit(1);
     }

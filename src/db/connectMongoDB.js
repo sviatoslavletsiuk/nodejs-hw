@@ -6,10 +6,8 @@ const connectMongoDB = async (mongoUrl) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    // eslint-disable-next-line no-console
     console.log('✅ MongoDB connection established successfully');
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('❌ MongoDB connection error:', error.message);
     throw error;
   }
