@@ -1,25 +1,13 @@
 import mongoose from 'mongoose';
+import { TAGS } from '../constants/tags.js';
 
 const { Schema, model } = mongoose;
-
-const allowedTags = [
-  'Work',
-  'Personal',
-  'Meeting',
-  'Shopping',
-  'Ideas',
-  'Travel',
-  'Finance',
-  'Health',
-  'Important',
-  'Todo',
-];
 
 const noteSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     content: { type: String, trim: true, default: '' },
-    tag: { type: String, enum: allowedTags, default: 'Todo' },
+    tag: { type: String, enum: TAGS, default: 'Todo', index: true },
   },
   { timestamps: true },
 );
