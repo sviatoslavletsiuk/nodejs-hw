@@ -1,4 +1,4 @@
-# nodejs-hw — 02-mongodb
+# nodejs-hw — 03-validation
 
 Короткі інструкції щоб підготувати репозиторій для перевірки і розгортання.
 
@@ -37,11 +37,88 @@ npm start
 
 Наявні точки доступу (CRUD)
 
-- GET /notes — повертає масив нот
-- GET /notes/:noteId — повертає ноту або 404 { message: 'Note not found' }
-- POST /notes — створює ноту (201)
-- PATCH /notes/:noteId — оновлює ноту або 404
-- DELETE /notes/:noteId — видаляє ноту або 404
+### GET /notes
+Повертає масив нот з підтримкою пагінації, фільтрування та пошуку.
+
+Параметри запиту (query):
+- `page` (int) - номер сторінки (за замовчуванням 1, мінімум 1)
+- `perPage` (int) - кількість елементів на сторінці (за замовчуванням 10, мін 5, макс 20)
+- `tag` (string) - фільтрування за тегом (один з: Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo)
+- `search` (string) - текстовий пошук по title та content (без урахування регістру)
+
+Приклади:
+```bash
+# Всі ноти з пагінацією
+curl http://localhost:3000/notes?page=1&perPage=10
+
+# Ноти з тегом "Work"
+curl http://localhost:3000/notes?tag=Work
+
+# Пошук по тексту "hello"
+curl http://localhost:3000/notes?search=hello
+
+# Комбінація фільтрів
+curl http://localhost:3000/notes?page=1&perPage=15&tag=Todo&search=hello
+```
+
+Відповідь:
+```json
+{
+  "page": 1,
+  "perPage": 10,
+  "totalNotes": 150,
+  "totalPages": 15,
+  "notes": [
+    {
+      "_id": "...",
+      "title": "...",
+      "content": "...",
+      "tag": "Todo",
+      "createdAt": "...",
+      "updatedAt": "..."
+    }
+  ]
+}
+```
+
+### GET /notes/:noteId
+Повертає ноту за ID або 404 { message: 'Note not found' }
+
+### POST /notes
+Створює ноту (201)
+
+Параметри тіла запиту (body):
+- `title` (string, обов'язково) - мінімум 1 символ
+- `content` (string, опціонально) - може бути порожнім
+- `tag` (string, опціонально) - один з доступних тегів
+
+Приклад:
+```bash
+curl -X POST http://localhost:3000/notes \
+  -H "Content-Type: application/json" \
+  -d '{"title": "My Note", "content": "Content here", "tag": "Work"}'
+```
+
+### PATCH /notes/:noteId
+Оновлює ноту або 404
+
+Параметри тіла запиту (body):
+- `title` (string, опціонально) - мінімум 1 символ
+- `content` (string, опціонально) - може бути порожнім
+- `tag` (string, опціонально) - один з доступних тегів
+
+Примітка: хоча б одне поле мусить бути присутнім в запиті
+
+### DELETE /notes/:noteId
+Видаляє ноту або 404
+
+Нові можливості (v3)
+
+- **Пагінація** -支持分页查询, з параметрами page та perPage
+- **Фільтрування** - фільтрування по тегам
+- **Текстовий пошук** - пошук по title та content
+- **Валідація** - валідація всіх запитів за допомогою бібліотеки celebrate
+- **Обробка помилок** - коректна обробка помилок валідації та MongoDB
 
 Приклади команд для перевірки (після запуску сервера):
 
