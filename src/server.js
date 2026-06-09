@@ -18,6 +18,11 @@ app.use(logger);
 app.use(cors());
 app.use(express.json());
 
+// Root route to show API status (prevents 404 on homepage)
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Welcome to Notes API' });
+});
+
 app.use(notesRoutes);
 
 app.use(errors());
