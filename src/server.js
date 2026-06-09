@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import { isCelebrateError } from 'celebrate';
+import { errors } from 'celebrate';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
 import notesRoutes from './routes/notesRoutes.js';
@@ -20,18 +20,9 @@ app.use(express.json());
 
 app.use(notesRoutes);
 
+app.use(errors());
+
 app.use(notFoundHandler);
-
-app.use((err, req, res, next) => {
-  if (isCelebrateError(err)) {
-    const message = err.details
-      .map((detail) => `${detail.context.label}: ${detail.message}`)
-      .join('; ');
-    return res.status(400).json({ message });
-  }
-  next(err);
-});
-
 app.use(errorHandler);
 
 (async () => {
