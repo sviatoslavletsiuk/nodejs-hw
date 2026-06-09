@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
+import { isCelebrateError } from 'celebrate';
+
 import { connectMongoDB } from './db/connectMongoDB.js';
-import { notesRoutes } from './routes/notesRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
@@ -20,27 +21,32 @@ app.use(express.json());
 app.use(notesRoutes);
 
 app.use(notFoundHandler);
+
+app.use((err, req, res, next) => {
+  if (isCelebrateError(err)) {
+    const message = err.details
+      .map((detail) => `${detail.context.label}: ${detail.message}`)
+      .join('; ');
+    return res.status(400).json({ message });
+  }
+  next(err);
+});
+
 app.use(errorHandler);
 
-const __filename = fileURLToPath(import.meta.url);
-if (process.argv[1] === __filename) {
-  const MONGO_URL = process.env.MONGO_URL;
-  if (!MONGO_URL) {
-    console.error('MONGO_URL is not defined in environment variables');
+(async () => {
+  try {
+    await connectMongoDB();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error(
+      'Failed to start server due to DB connection error:',
+      error?.message || error,
+    );
     process.exit(1);
   }
-
-  (async () => {
-    try {
-      await connectMongoDB();
-      app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
-    } catch {
-      console.error('Failed to start server due to DB connection error');
-      process.exit(1);
-    }
-  })();
-}
+})();
 
 export default app;
