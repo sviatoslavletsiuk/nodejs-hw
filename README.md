@@ -38,15 +38,18 @@ npm start
 Наявні точки доступу (CRUD)
 
 ### GET /notes
+
 Повертає масив нот з підтримкою пагінації, фільтрування та пошуку.
 
 Параметри запиту (query):
+
 - `page` (int) - номер сторінки (за замовчуванням 1, мінімум 1)
 - `perPage` (int) - кількість елементів на сторінці (за замовчуванням 10, мін 5, макс 20)
 - `tag` (string) - фільтрування за тегом (один з: Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo)
 - `search` (string) - текстовий пошук по title та content (без урахування регістру)
 
 Приклади:
+
 ```bash
 # Всі ноти з пагінацією
 curl http://localhost:3000/notes?page=1&perPage=10
@@ -62,6 +65,7 @@ curl http://localhost:3000/notes?page=1&perPage=15&tag=Todo&search=hello
 ```
 
 Відповідь:
+
 ```json
 {
   "page": 1,
@@ -82,17 +86,21 @@ curl http://localhost:3000/notes?page=1&perPage=15&tag=Todo&search=hello
 ```
 
 ### GET /notes/:noteId
+
 Повертає ноту за ID або 404 { message: 'Note not found' }
 
 ### POST /notes
+
 Створює ноту (201)
 
 Параметри тіла запиту (body):
+
 - `title` (string, обов'язково) - мінімум 1 символ
 - `content` (string, опціонально) - може бути порожнім
 - `tag` (string, опціонально) - один з доступних тегів
 
 Приклад:
+
 ```bash
 curl -X POST http://localhost:3000/notes \
   -H "Content-Type: application/json" \
@@ -100,9 +108,11 @@ curl -X POST http://localhost:3000/notes \
 ```
 
 ### PATCH /notes/:noteId
+
 Оновлює ноту або 404
 
 Параметри тіла запиту (body):
+
 - `title` (string, опціонально) - мінімум 1 символ
 - `content` (string, опціонально) - може бути порожнім
 - `tag` (string, опціонально) - один з доступних тегів
@@ -110,6 +120,7 @@ curl -X POST http://localhost:3000/notes \
 Примітка: хоча б одне поле мусить бути присутнім в запиті
 
 ### DELETE /notes/:noteId
+
 Видаляє ноту або 404
 
 Нові можливості (v3)
@@ -144,6 +155,7 @@ curl -s -X DELETE http://localhost:3000/notes/<id> | jq
 5. Дочекайтесь завершення деплою і перевірте ендпоінти.
 
 Якщо хочете — я можу допомогти додати `MONGO_URL` у Render (потрібен доступ) або зробити тестові запити після того, як ви додасте `MONGO_URL`.
+
 # nodejs-hw
 
 Проєкт виконано для домашнього завдання — Express сервер для нотаток.
