@@ -1,9 +1,11 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
 
 import { connectMongoDB } from './db/connectMongoDB.js';
+import authRoutes from './routes/authRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
@@ -17,12 +19,14 @@ const PORT = process.env.PORT || 3000;
 app.use(logger);
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Root route to show API status (prevents 404 on homepage)
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Notes API' });
 });
 
+app.use(authRoutes);
 app.use(notesRoutes);
 
 app.use(errors());

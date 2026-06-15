@@ -22,11 +22,14 @@
   },
   "homepage": "https://github.com/sviatoslavletsiuk/nodejs-hw#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "celebrate": "^15.0.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.6.1",
     "pino-http": "^11.0.0"
   },
